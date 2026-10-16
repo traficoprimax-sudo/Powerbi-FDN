@@ -50,3 +50,15 @@ alertar** (tabla `etl_runs`, `meta`, webhook opcional, `alertas.log`), nunca par
   `fuente='MANUAL_DEMO'` y títulos `[DEMO]`. Elimínalos cuando tengas datos oficiales.
 - `precipitaciones_ejemplo.csv`: set histórico de enero 2026 (fuera de ventana → no puntúa).
 - Umbrales de nivel: `umbral_criticidad.csv` (documentados, editables sin tocar código).
+
+## 🚀 Publicar en GitHub
+```bash
+cd poder-lluvia-pbi
+git init -q && git add -A
+git commit -qm "Poder Lluvia Perú: ETL + Power BI (arquitectura, pruebas 6/6)"
+git branch -M main
+git remote add origin https://github.com/<tu-usuario>/poder-lluvia-peru.git
+git push -u origin main
+```
+Luego: Settings → Pages → Deploy from branch → rama `main`, carpeta `/pages` → tablero espejo en `https://<tu-usuario>.github.io/poder-lluvia-peru/`.
+Nota: la BD SQLite (`data/poder_lluvia.db`) y los logs están en `.gitignore`; se crean automáticamente al ejecutar `python etl/run.py` o `etl/load.py`.

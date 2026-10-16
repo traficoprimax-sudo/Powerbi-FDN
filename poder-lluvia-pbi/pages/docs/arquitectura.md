@@ -49,7 +49,7 @@
 ## 3. Pasos de implementación (recetario)
 > Versión ejecutable y detallada para Windows: **`docs/INSTALACION_WINDOWS.md`** (con checklist final y troubleshooting). Resumen:
 
-1. **Clonar/cargar** este repo; `pip install -r etl/requirements.txt`; validar con `python tests/test_etl.py` (5× PASS).
+1. **Clonar/cargar** este repo; `pip install -r etl/requirements.txt`; validar con `python tests/test_etl.py` (6× PASS).
 2. **Verificar fuentes desde Perú**: abrir cada URL en navegador; si cambió la estructura, ajustar el selector en `etl/extract_sutran.py` (el pipeline avisa "HTTP 200 pero 0 registros" = sospecha de cambio de sitio). Extractores activos: SUTRN y COEN/INDECI; SENAMHI/CENEPRED/INABI quedan registrados como descargas pendientes de parser.
 3. **Programar**: Task Scheduler → diaria 06:00 ejecutando `etl\pipeline.bat` (`schtasks /Create ...`, ver docs Paso 4; "reanudar tareas programadas" si el PC estuvo apagado).
 4. **Nube**: mover `data/` a OneDrive; en PBI Desktop: Obtener datos → Carpeta → ruta OneDrive; aplicar modelo de `report/modelo_dax.md`.

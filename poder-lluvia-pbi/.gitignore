@@ -1,0 +1,5 @@
+*.zip
+__pycache__/
+*.pyc
+data/poder_lluvia.db
+data/alertas.log
