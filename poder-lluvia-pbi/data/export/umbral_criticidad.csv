@@ -1,0 +1,6 @@
+nivel,nombre_nivel,score_min,criterio_mm48h,criterio_evento,color_hex
+1,Baja,0.0,,sin eventos activos en 30 d,#2E7D32
+2,Media,20.0,mm48 >= 20,aviso VERIFICANDO o evento >30 d,#F9A825
+3,Alta,40.0,mm48 >= 40,BLOCKED/RESTRINGIDO activo,#EF6C00
+4,Muy Alta,70.0,mm48 >= 70,HUAICO/CRECIDA activo,#D32F2F
+5,Extrema,90.0,mm48 >= 90,HUAICO + INTERRUMPIDO simultaneo,#6A1B9A

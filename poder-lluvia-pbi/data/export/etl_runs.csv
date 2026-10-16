@@ -1,0 +1,4 @@
+run_id,started_at,finished_at,fuente,url,ok,registros_nuevos,error,http_status,version_parser
+1,2026-10-16T13:14:28.688765,2026-10-16T13:14:28.688791,sutran_noticias,https://www.gob.pe/institucion/sutran/noticias,0,0,HTTP 418 (intento 3/3),418,-
+2,2026-10-16T13:15:11.629215,2026-10-16T13:15:11.629225,csv:precipitaciones_ejemplo,file://precipitaciones_ejemplo.csv,1,6,,,load 1.0
+3,2026-10-16T13:15:11.629964,2026-10-16T13:15:11.629970,csv:umbral_criticidad,file://umbral_criticidad.csv,1,5,,,load 1.0

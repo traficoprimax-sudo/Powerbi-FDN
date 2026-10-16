@@ -1,0 +1,50 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Poder Lluvia Perú — Tablero de Criticidad</title>
+<style>
+:root{--bg:#0d1b2a;--card:#13293d;--tx:#e0e6ed;--mut:#8fa3b0}
+*{box-sizing:border-box}body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+header{padding:22px 28px;background:linear-gradient(90deg,#13293d,#1b4965)}
+h1{margin:0;font-size:1.4rem}small{color:var(--mut)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:20px 28px}
+.card{background:var(--card);border-radius:12px;padding:16px}.kpi b{font-size:1.6rem}
+table{width:100%;border-collapse:collapse;font-size:.85rem}th,td{padding:7px 9px;border-bottom:1px solid #24425c;text-align:left}
+.n1{color:#7cb342}.n2{color:#fdd835}.n3{color:#fb8c00}.n4{color:#e53935}.n5{color:#ce93d8}
+footer{padding:16px 28px;color:var(--mut);font-size:.8rem}
+#staleness{padding:10px 28px;background:#4a1c1c;display:none}
+</style></head><body>
+<header><h1>🌧️ Poder Lluvia Perú — Criticidad por precipitaciones y transitabilidad vial</h1>
+<small>Fuentes oficiales citadas con enlace. Datos sin verificación automática se marcan MANUAL.</small></header>
+<div id="staleness">⚠️ Última actualización OK hace más de 48 h — revisar ETL.</div>
+<div class="grid" id="kpis"></div>
+<div class="grid" style="grid-template-columns:1fr"><div class="card">
+<h3>Criticidad por departamento</h3><table id="tbl"><thead><tr>
+<th>Entidad</th><th>Nivel</th><th>Score (mm máx 7d)</th><th>Factor</th><th>Actualizado</th></tr></thead><tbody></tbody></table>
+<p><button onclick="ubicarMapa()">📍 Ver en mapa (coord. aprox. del primer evento/estación)</button> <span id="maplink"></span></p>
+</div></div>
+<footer id="foot">Cargando datos…</footer>
+<script>
+async function csv(u){const t=await (await fetch(u)).text();const rows=[];let cur=[],f='',q=false;
+ for(const c of t){if(q){if(c==='"'){q=false}else f+=c;continue}
+ if(c==='"')q=true;else if(c===','){cur.push(f);f=''}else if(c==='\n'||c==='\r'){if(f!==''||cur.length){cur.push(f);rows.push(cur);cur=[];f=''}}else f+=c}
+ if(f!==''||cur.length){cur.push(f);rows.push(cur)}return rows}
+async function main(){
+ const crit=await csv('../data/export/criticidad_ultima.csv');
+ const meta=Object.fromEntries((await csv('../data/export/meta.csv')).slice(1));
+ const runs=(await csv('../data/export/etl_runs.csv'));
+ const hdr=runs[0];const okIdx=hdr.indexOf('ok'),fIdx=hdr.indexOf('fuente'),eIdx=hdr.indexOf('error');
+ const fallidas=[...new Set(runs.slice(1).filter(r=>r[okIdx]==='0').map(r=>r[fIdx]))];
+ document.getElementById('kpis').innerHTML=
+  `<div class="card kpi"><b>${crit.length-1}</b><br>entidades evaluadas</div>`+
+  `<div class="card kpi"><b class="n4">${crit.slice(1).filter(r=>+r[hdr.indexOf('nivel')]>=4).length}</b><br>en nivel Alto+</div>`+
+  `<div class="card kpi"><b>${fallidas.length}</b><br>fuentes con fallo reciente</div>`+
+  `<div class="card kpi"><b style="font-size:1rem">${meta['ultima_actualizacion_ok']||meta['ultima_carga_local']||'—'}</b><br>última actualización OK</div>`;
+ const tb=document.querySelector('#tbl tbody');tb.innerHTML=crit.slice(1).map(r=>
+  `<tr><td>${r[hdr.indexOf('entidad_id')]}</td><td class="n${r[hdr.indexOf('nivel')]}">${r[hdr.indexOf('nombre_nivel')]}</td><td>${r[hdr.indexOf('score')]}</td><td>${r[hdr.indexOf('factor_principal')]}</td><td>${r[hdr.indexOf('actualizado_en')]}</td></tr>`).join('');
+ document.getElementById('foot').textContent=`Última ejecución: ${meta['ultima_ejecucion']||'—'} · Fuentes con fallo: ${fallidas.join(', ')||'ninguna'} · Los CSV crudos están en data/export/`;
+ const u=meta['ultima_actualizacion_ok'];if(!u||(Date.now()-new Date(u)>48*36e5))document.getElementById('staleness').style.display='block';
+ window._crit=crit.map(r=>({dep:r[hdr.indexOf('entidad_id')],lat:-12.05,lng:-77.05})); // TODO: tabla coordenados desde INEI
+}
+function ubicarMapa(){const d=prompt('Departamento a ubicar (ej. Ancash):');if(d)window.open(`https://www.google.com/maps/search/${encodeURIComponent(d+' Perú')}`,'_blank')}
+main().catch(e=>document.getElementById('foot').textContent='Error cargando CSVs: '+e);
+</script></body></html>
