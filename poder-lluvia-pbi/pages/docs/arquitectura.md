@@ -47,13 +47,15 @@
 | Escalado futuro | Fabric: Lakehouse + Dataflow Gen2 + Notebook (capa gratuita de Fabric con capacidad F0 desde ~US$5/mes pagándose por usuario, o incluido según licencia) | Variable |
 
 ## 3. Pasos de implementación (recetario)
-1. **Clonar/cargar** este repo; `pip install -r etl/requirements.txt`.
-2. **Verificar fuentes desde Perú**: abrir cada URL en navegador; si cambió la estructura, ajustar el selector en `etl/extract_*.py` (el pipeline avisa "HTTP 200 pero 0 registros" = sospecha de cambio de sitio).
-3. **Programar**: Task Scheduler → diaria 06:00 ejecutando `etl\pipeline.bat` ("ejecutar aunque el usuario no haya iniciado sesión" + "reintentar si falla").
+> Versión ejecutable y detallada para Windows: **`docs/INSTALACION_WINDOWS.md`** (con checklist final y troubleshooting). Resumen:
+
+1. **Clonar/cargar** este repo; `pip install -r etl/requirements.txt`; validar con `python tests/test_etl.py` (5× PASS).
+2. **Verificar fuentes desde Perú**: abrir cada URL en navegador; si cambió la estructura, ajustar el selector en `etl/extract_sutran.py` (el pipeline avisa "HTTP 200 pero 0 registros" = sospecha de cambio de sitio). Extractores activos: SUTRN y COEN/INDECI; SENAMHI/CENEPRED/INABI quedan registrados como descargas pendientes de parser.
+3. **Programar**: Task Scheduler → diaria 06:00 ejecutando `etl\pipeline.bat` (`schtasks /Create ...`, ver docs Paso 4; "reanudar tareas programadas" si el PC estuvo apagado).
 4. **Nube**: mover `data/` a OneDrive; en PBI Desktop: Obtener datos → Carpeta → ruta OneDrive; aplicar modelo de `report/modelo_dax.md`.
-5. **Publicar** en Mi área de trabajo (gratis); instalar **Gateway personal**, registrar la carpeta, configurar 8 refrescos/día. *(Si prefieres cero PC: en su lugar, Power Automate/GitHub Actions regenera los CSV en SharePoint y PBI usa origen en la nube sin gateway.)*
+5. **Publicar** en Mi área de trabajo (gratis); instalar **Gateway personal**, registrar la carpeta, configurar ≤8 refrescos/día. *(Si prefieres cero PC encendido: `.github/workflows/etl.yml` corre el pipeline en GitHub Actions y/o Power Automate regenera los CSV en SharePoint — PBI usa origen 100 % nube sin gateway.)*
 6. **Alertas**: definir `PLP_ALERT_WEBHOOK` (Teams) → fallos de fuente y 0-registros llegan al canal; en el tablero, medida `alerta_stale` muestra ⚠️ si `ultima_actualizacion_ok` > 48 h.
-7. **Gobernanza**: página "Etl_runs" visible; toda fila lleva `url_origen` y `fuente` (SENAMHI vs MANUAL nunca se mezclan).
+7. **Gobernanza**: página "Etl_runs" visible; toda fila lleva `url_origen` y `fuente` (SENAMHI vs MANUAL nunca se mezclan); geocodificación conservadora vía `etl/georef.py` (sin adivinar: lo no identificado queda `SIN_GEOCODIFICAR`).
 
 ## 4. Riesgos y mitigaciones
 - **WAF/bloqueo (418/403):** reintentos con backoff, User-Agent identificado, frecuencia baja (1/día), registro del fallo + alerta. Nunca simulamos datos.

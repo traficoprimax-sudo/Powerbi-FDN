@@ -2,3 +2,22 @@ run_id,started_at,finished_at,fuente,url,ok,registros_nuevos,error,http_status,v
 1,2026-10-16T13:14:28.688765,2026-10-16T13:14:28.688791,sutran_noticias,https://www.gob.pe/institucion/sutran/noticias,0,0,HTTP 418 (intento 3/3),418,-
 2,2026-10-16T13:15:11.629215,2026-10-16T13:15:11.629225,csv:precipitaciones_ejemplo,file://precipitaciones_ejemplo.csv,1,6,,,load 1.0
 3,2026-10-16T13:15:11.629964,2026-10-16T13:15:11.629970,csv:umbral_criticidad,file://umbral_criticidad.csv,1,5,,,load 1.0
+4,2026-10-16T13:29:35.648023,2026-10-16T13:29:35.648041,sutran_noticias,https://www.gob.pe/institucion/sutran/noticias,0,0,HTTP 418 (intento 3/3),418,-
+5,2026-10-16T13:31:41.338029,2026-10-16T13:31:41.338044,senamhi_advertencias,https://senamhi.gob.pe/index.php/productos/advertencias-especiales-por-lluvias,0,0,"ConnectTimeout: HTTPSConnectionPool(host='senamhi.gob.pe', port=443): Max retries exceeded with url: /index.php/productos/advertencias-especiales-por-lluvias (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7f2c471b9d90>, 'Connection to senamhi.gob.pe timed out. (connect timeout=30)')) (intento 3/3)",,-
+6,2026-10-16T13:32:21.753168,2026-10-16T13:32:21.753187,cenepred_alertas,https://cenepred.gob.pe/web/portal-de-datos/,0,0,"SSLError: HTTPSConnectionPool(host='cenepred.gob.pe', port=443): Max retries exceeded with url: /web/portal-de-datos/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)'))) (intento 3/3)",,-
+7,2026-10-16T13:33:01.044700,2026-10-16T13:33:01.044716,inabi_roadbook,https://www.gob.pe/institucion/inabi/publicaciones,0,0,HTTP 418 (intento 3/3),418,-
+8,2026-10-16T13:33:37.041386,2026-10-16T13:33:37.041407,coen_indeci,https://www.indeci.gob.pe/?page_id=960,0,0,"ConnectionError: HTTPSConnectionPool(host='www.indeci.gob.pe', port=443): Max retries exceeded with url: /?page_id=960 (Caused by NameResolutionError(""<urllib3.connection.HTTPSConnection object at 0x7f2c471e88f0>: Failed to resolve 'www.indeci.gob.pe' ([Errno -2] Name or service not known)"")) (intento 3/3)",,-
+9,2026-10-16T13:33:59.161456,2026-10-16T13:33:59.161463,csv:precipitaciones_ejemplo,file://precipitaciones_ejemplo.csv,1,6,,,load 1.0
+10,2026-10-16T13:33:59.161915,2026-10-16T13:33:59.161920,csv:umbral_criticidad,file://umbral_criticidad.csv,1,5,,,load 1.0
+11,2026-10-16T13:34:09.524865,2026-10-16T13:34:09.524873,csv:eventos_viales,file://eventos_viales_demo.csv,1,3,,,load 1.0
+12,2026-10-16T13:34:09.525958,2026-10-16T13:34:09.525964,csv:precipitaciones,file://precipitaciones_demo.csv,1,9,origen MANUAL/local (no API),,load 1.0
+13,2026-10-16T13:34:09.526673,2026-10-16T13:34:09.526679,csv:precipitaciones_ejemplo,file://precipitaciones_ejemplo.csv,1,6,,,load 1.0
+14,2026-10-16T13:34:09.527034,2026-10-16T13:34:09.527040,csv:umbral_criticidad,file://umbral_criticidad.csv,1,5,,,load 1.0
+15,2026-10-16T13:34:28.819965,2026-10-16T13:34:28.820009,csv:eventos_viales,file://eventos_viales_demo.csv,1,3,,,load 1.0
+16,2026-10-16T13:34:28.821154,2026-10-16T13:34:28.821188,csv:precipitaciones,file://precipitaciones_demo.csv,1,9,origen MANUAL/local (no API),,load 1.0
+17,2026-10-16T13:34:28.821983,2026-10-16T13:34:28.822015,csv:precipitaciones_ejemplo,file://precipitaciones_ejemplo.csv,1,6,,,load 1.0
+18,2026-10-16T13:34:28.822424,2026-10-16T13:34:28.822456,csv:umbral_criticidad,file://umbral_criticidad.csv,1,5,,,load 1.0
+19,2026-10-16T13:34:42.512112,2026-10-16T13:34:42.512121,csv:eventos_viales,file://eventos_viales_demo.csv,1,3,,,load 1.0
+20,2026-10-16T13:34:42.513188,2026-10-16T13:34:42.513195,csv:precipitaciones,file://precipitaciones_demo.csv,1,9,origen MANUAL/local (no API),,load 1.0
+21,2026-10-16T13:34:42.513869,2026-10-16T13:34:42.513874,csv:precipitaciones_ejemplo,file://precipitaciones_ejemplo.csv,1,6,,,load 1.0
+22,2026-10-16T13:34:42.514190,2026-10-16T13:34:42.514194,csv:umbral_criticidad,file://umbral_criticidad.csv,1,5,,,load 1.0

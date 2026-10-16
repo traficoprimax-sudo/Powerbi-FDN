@@ -7,17 +7,22 @@ import csv, os, sqlite3, sys, datetime as dt
 sys.path.insert(0, os.path.dirname(__file__))
 import config
 
-TABLE_BY_FILE = {"precipitaciones": "precipitaciones", "umbral_criticidad": None}
+TABLE_BY_FILE = {  # nombre de CSV -> tabla destino (permite *_demo.csv sin crear tablas nuevas)
+    "precipitaciones": "precipitaciones",
+    "precipitaciones_demo": "precipitaciones",
+    "eventos_viales_demo": "eventos_viales",
+    "umbral_criticidad": "umbral_criticidad",
+}
 
 def main(check=False):
-    con, _ = __import__("run").db() if False else (None, None)
     path = os.path.join(config.DATA_DIR, "poder_lluvia.db")
     con = sqlite3.connect(path)
     con.executescript(open(os.path.join(config.BASE_DIR, "schema.sql"), encoding="utf-8").read())
     total = 0
     for fname in sorted(os.listdir(config.DATA_DIR)):
         if not fname.endswith(".csv"): continue
-        table = fname[:-4]
+        stem = fname[:-4]
+        table = TABLE_BY_FILE.get(stem, stem)
         cols_exist = {r[1] for r in con.execute(f"PRAGMA table_info({table})")} \
                      if table in [r[0] for r in con.execute("SELECT name FROM sqlite_master WHERE type='table'")] else set()
         rows = list(csv.DictReader(open(os.path.join(config.DATA_DIR, fname), encoding="utf-8-sig")))

@@ -1,0 +1,43 @@
+name: Poder Lluvia ETL (nube, sin PC local)
+# Ejecuta el pipeline en GitHub Actions y publica los CSV como artefacto.
+# OPCIONAL: requiere un destino 100% nube para que Power BI refresque sin tu PC
+# (SharePoint/OneDrive via Power Automate, o Azure Blob con credencial de PBI).
+# OJO: gob.pe puede bloquear IPs de datacenter (fuera de Perú) — si falla,
+# el pipeline deja registro en etl_runs y el paso "Alerta" lo notifica.
+on:
+  schedule:
+    - cron: "0 11 * * *"   # 11:00 UTC ≈ 06:00 PET
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  etl:
+    runs-on: ubuntu-latest
+    env:
+      PLP_ALERT_WEBHOOK: ${{ secrets.PLP_ALERT_WEBHOOK }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Dependencias
+        run: pip install -r etl/requirements.txt
+      - name: Pruebas unitarias (no tocan red)
+        run: python tests/test_etl.py
+      - name: ETL scrape + criticidad + export
+        continue-on-error: true   # los fallos de fuente se registran y alertan, no rompen el job
+        run: |
+          python etl/run.py || echo "ETL_EXIT=$?" >> "$GITHUB_ENV"
+          python etl/criticidad.py
+          python etl/salida_csv.py
+      - name: Alerta si hubo fuentes fallidas
+        if: env.ETL_EXIT != '' && env.ETL_EXIT != '0'
+        run: |
+          echo "::warning::Fuentes fallidas (exit $ETL_EXIT). Ver tabla etl_runs / webhook."
+      - name: Publicar artefacto data/export
+        uses: actions/upload-artifact@v4
+        with:
+          name: poder-lluvia-export
+          path: data/export/*.csv
+          retention-days: 30

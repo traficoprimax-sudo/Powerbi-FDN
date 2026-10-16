@@ -30,8 +30,11 @@ def main():
         lvl = 5 if grave and v["lluvia"]>=90 else 4 if grave or (v["lluvia"]>=70 and activa) \
               else 3 if v["lluvia"]>=40 or any(e=="INTERRUMPIDO" for _,e in ev) \
               else 2 if v["lluvia"]>=20 or activa else 1
+        factor = f"lluvia7d={v['lluvia']} mm; eventos={len(ev)}"
+        if k == "DEP:SIN_GEOCODIFICAR":
+            factor += "; NO se puntúa: falta departamento explícito en la fuente"
         con.execute("INSERT OR REPLACE INTO criticidad_ultima(entidad_id,nivel,nombre_nivel,score,factor_principal,actualizado_en) VALUES (?,?,?,?,?,?)",
-            (k,lvl,NIV[lvl],v["lluvia"],f"lluvia7d={v['lluvia']} mm; eventos={len(ev)}",dt.datetime.now().isoformat())); n+=1
+            (k,lvl,NIV[lvl],v["lluvia"],factor,dt.datetime.now().isoformat())); n+=1
     con.commit(); con.close(); print(f"criticidad recalculada: {n} entidades")
 
 if __name__ == "__main__": main()

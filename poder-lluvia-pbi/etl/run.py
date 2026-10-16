@@ -7,7 +7,10 @@ sys.path.insert(0, os.path.dirname(__file__))
 import config, fetch
 import extract_sutran
 
-CONNECTORS = {"sutran_noticias": lambda html: extract_sutran.extract_sutran(html)}
+CONNECTORS = {
+    "sutran_noticias": lambda html: extract_sutran.extract_sutran(html),
+    "coen_indeci":       lambda html: extract_sutran.extract_indeci(html),
+}
 
 def db():
     path = os.path.join(config.DATA_DIR, "poder_lluvia.db")
@@ -16,8 +19,9 @@ def db():
     return con, path
 
 def log_run(con, fuente, url, ok, nuevos, error, status, vparser):
+    now = dt.datetime.now(dt.timezone.utc).isoformat()
     con.execute("INSERT INTO etl_runs(started_at,finished_at,fuente,url,ok,registros_nuevos,error,http_status,version_parser) VALUES (?,?,?,?,?,?,?,?,?)",
-                (dt.datetime.utcnow().isoformat(), dt.datetime.utcnow().isoformat(), fuente, url,
+                (now, now, fuente, url,
                  int(ok), nuevos, error, status, vparser))
     con.commit()
 

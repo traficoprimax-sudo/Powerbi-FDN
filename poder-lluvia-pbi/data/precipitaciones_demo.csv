@@ -1,0 +1,10 @@
+fecha,estacion,departamento,provincia,distrito,mm_dia,fuente,url_origen
+2026-10-14,SEN-047,Ancash,Huaraz,Huaraz,88.2,MANUAL_DEMO,"https://senamhi.gob.pe (valores ilustrativos, NO oficiales)"
+2026-10-15,SEN-047,Ancash,Huaraz,Huaraz,95.1,MANUAL_DEMO,"https://senamhi.gob.pe (valores ilustrativos, NO oficiales)"
+2026-10-16,SEN-047,Ancash,Huaraz,Huaraz,61.0,MANUAL_DEMO,"https://senamhi.gob.pe (valores ilustrativos, NO oficiales)"
+2026-10-14,SEN-112,Arequipa,Cayma,Chala,22.5,MANUAL_DEMO,"https://senamhi.gob.pe (valores ilustrativos, NO oficiales)"
+2026-10-15,SEN-112,Arequipa,Cayma,Chala,31.0,MANUAL_DEMO,"https://senamhi.gob.pe (valores ilustrativos, NO oficiales)"
+2026-10-16,SEN-112,Arequipa,Cayma,Chala,18.4,MANUAL_DEMO,"https://senamhi.gob.pe (valores ilustrativos, NO oficiales)"
+2026-10-14,SEN-201,La Libertad,Trujillo,El Porvenir,45.3,MANUAL_DEMO,"https://senamhi.gob.pe (valores ilustrativos, NO oficiales)"
+2026-10-15,SEN-201,La Libertad,Trujillo,El Porvenir,52.0,MANUAL_DEMO,"https://senamhi.gob.pe (valores ilustrativos, NO oficiales)"
+2026-10-16,SEN-201,La Libertad,Trujillo,El Porvenir,40.1,MANUAL_DEMO,"https://senamhi.gob.pe (valores ilustrativos, NO oficiales)"

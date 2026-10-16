@@ -41,6 +41,11 @@ SOURCES = {
         "kind": "listing_html",
         "nota": "INABI publica el Road Book (estado de transitabilidad de redes viales) como PDF/XLS descargables.",
     },
+    "coen_indeci": {
+        "url": "https://www.indeci.gob.pe/?page_id=960",
+        "kind": "listing_html",
+        "nota": "COEN/INDECI: avisos y alertas por peligros / emergencias por lluvias.",
+    },
 }
 
 # --- Canal de alertas operativas (Webhook Teams/Slack OPCIONAL) ---
