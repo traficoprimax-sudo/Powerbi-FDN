@@ -9,7 +9,7 @@ Guía paso a paso (Python → Task Scheduler → OneDrive → Power BI → Gatew
 etl/     config.py fetch.py extract_sutran.py georef.py run.py load.py criticidad.py salida_csv.py
          schema.sql pipeline.bat pipeline.sh requirements.txt
 data/    poder_lluvia.db (SQLite) · *.csv semilla/manual/demo · export/*.csv (salida para PBI)
-tests/   test_etl.py (5 pruebas unitarias sin red: fechas, geocodificación, clasificación, motor, export)
+tests/   test_etl.py (6 pruebas unitarias sin red: fechas, geocodificación, clasificación, motor, export, vigía stale)
 report/  modelo_dax.md (modelo, medidas DAX, visuales, programación de refresco)
 docs/    INSTALACION_WINDOWS.md (recetario completo con checklist y troubleshooting)
 pages/   index.html (tablero web espejo, opcional) · docs/arquitectura.md
@@ -19,12 +19,13 @@ pages/   index.html (tablero web espejo, opcional) · docs/arquitectura.md
 ## Uso rápido
 ```bash
 pip install -r etl/requirements.txt
-python tests/test_etl.py       # 5× PASS antes de tocar nada
+python tests/test_etl.py       # 6× PASS antes de tocar nada
 python etl/run.py              # scrapea fuentes oficiales; exit 2 si alguna falló (registrado + alerta)
 python etl/load.py --check     # valida CSVs de data/ sin escribir
 python etl/load.py             # carga semilla/manual/demo a SQLite (trazado en etl_runs)
 python etl/criticidad.py       # recalcula niveles 1–5 por departamento
 python etl/salida_csv.py       # exporta data/export/*.csv -> conectarlos a Power BI (origen "Carpeta")
+python etl/alerta_stale.py     # vigía: exit 3 si no hay actualización OK reciente (>48h) — ya incluido en pipeline.bat/.sh
 ```
 Windows: programar `etl/pipeline.bat` con el Programador de tareas (diario 06:00) — ver docs Paso 4.
 Power BI: importar `data/export/` como origen de carpeta y seguir `report/modelo_dax.md`.

@@ -1,6 +1,6 @@
 """Pruebas unitarias del ETL — ejecutar: python tests/test_etl.py (o pytest tests/)
 Cubre: parser de fechas, geocodificación conservadora, clasificación SUTRN/INDECI,
-motor de criticidad y export CSV. Sin red: todo con HTML fixture local."""
+motor de criticidad, export CSV y vigía de datos antiguos. Sin red: todo con fixtures locales."""
 import os, sys, sqlite3, tempfile, shutil, datetime as dt
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -74,6 +74,35 @@ def test_export_csv():
         salida_csv.main()
         config.DATA_DIR = old
         assert os.path.exists(os.path.join(tmp, "export", "meta.csv"))
+    finally:
+        shutil.rmtree(tmp)
+
+def test_alerta_stale():
+    """Vigía: sin marca OK => STALE (exit 3); con marca reciente => OK (exit 0)."""
+    import subprocess, tempfile as tf
+    tmp = tf.mkdtemp()
+    env = dict(os.environ, PLP_DATA=tmp)
+    try:
+        r = subprocess.run([sys.executable, os.path.join(ETL, "alerta_stale.py")],
+                           env=env, capture_output=True, text=True)
+        assert r.returncode == 3 and "STALE" in r.stdout, (r.returncode, r.stdout)
+        # crear DB con marca OK reciente
+        dbp = os.path.join(tmp, "poder_lluvia.db")
+        con = sqlite3.connect(dbp)
+        con.executescript(open(os.path.join(ETL, "schema.sql"), encoding="utf-8").read())
+        con.execute("INSERT INTO meta(clave,valor) VALUES ('ultima_actualizacion_ok',?)",
+                    (dt.datetime.now().isoformat(),)); con.commit(); con.close()
+        r = subprocess.run([sys.executable, os.path.join(ETL, "alerta_stale.py"), "--horas", "48"],
+                           env=env, capture_output=True, text=True)
+        assert r.returncode == 0 and "OK" in r.stdout, (r.returncode, r.stdout)
+        # marca vieja (100 h) => STALE
+        con = sqlite3.connect(dbp)
+        con.execute("UPDATE meta SET valor=? WHERE clave='ultima_actualizacion_ok'",
+                    ((dt.datetime.now() - dt.timedelta(hours=100)).isoformat(),))
+        con.commit(); con.close()
+        r = subprocess.run([sys.executable, os.path.join(ETL, "alerta_stale.py"), "--horas", "48"],
+                           env=env, capture_output=True, text=True)
+        assert r.returncode == 3, (r.returncode, r.stdout)
     finally:
         shutil.rmtree(tmp)
 

@@ -54,7 +54,7 @@
 3. **Programar**: Task Scheduler → diaria 06:00 ejecutando `etl\pipeline.bat` (`schtasks /Create ...`, ver docs Paso 4; "reanudar tareas programadas" si el PC estuvo apagado).
 4. **Nube**: mover `data/` a OneDrive; en PBI Desktop: Obtener datos → Carpeta → ruta OneDrive; aplicar modelo de `report/modelo_dax.md`.
 5. **Publicar** en Mi área de trabajo (gratis); instalar **Gateway personal**, registrar la carpeta, configurar ≤8 refrescos/día. *(Si prefieres cero PC encendido: `.github/workflows/etl.yml` corre el pipeline en GitHub Actions y/o Power Automate regenera los CSV en SharePoint — PBI usa origen 100 % nube sin gateway.)*
-6. **Alertas**: definir `PLP_ALERT_WEBHOOK` (Teams) → fallos de fuente y 0-registros llegan al canal; en el tablero, medida `alerta_stale` muestra ⚠️ si `ultima_actualizacion_ok` > 48 h.
+6. **Alertas**: definir `PLP_ALERT_WEBHOOK` (Teams) → fallos de fuente y 0-registros llegan al canal; en el tablero, medida `alerta_stale` muestra ⚠️ si `ultima_actualizacion_ok` > 48 h. Dos mecanismos complementarios: (a) `run.py` borra la marca OK cuando alguna fuente falla → el KPI ve "SIN ACTUALIZACIÓN OK" ante un fallo activo; (b) el vigía `etl/alerta_stale.py` (incluido en `pipeline.bat/.sh` y en GitHub Actions, exit 3 + webhook + `alertas.log`) detecta además el caso "el pipeline nunca corrió" (PC apagado / tarea desactivada).
 7. **Gobernanza**: página "Etl_runs" visible; toda fila lleva `url_origen` y `fuente` (SENAMHI vs MANUAL nunca se mezclan); geocodificación conservadora vía `etl/georef.py` (sin adivinar: lo no identificado queda `SIN_GEOCODIFICAR`).
 
 ## 4. Riesgos y mitigaciones

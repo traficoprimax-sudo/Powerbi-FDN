@@ -25,7 +25,7 @@ python etl\load.py --check :: valida CSVs semilla sin escribir
 python etl\load.py         :: carga data\*.csv (precipitaciones manuales + umbrales) a SQLite
 python etl\criticidad.py   :: calcula niveles 1–5 por departamento
 python etl\salida_csv.py   :: genera data\export\*.csv para Power BI
-python tests\test_etl.py   :: 5 pruebas unitarias, todas PASS
+python tests\test_etl.py   :: 6 pruebas unitarias, todas PASS
 ```
 
 ## Paso 4 — Programar la actualización diaria (Task Scheduler)
@@ -36,7 +36,12 @@ schtasks /Create /TN "PoderLluvia_ETL" /SC DAILY /ST 06:00 ^
   /RL LIMITED
 schtasks /Run /TN "PoderLluvia_ETL"     :: prueba inmediata
 ```
-`pipeline.bat` ejecuta run → criticidad → salida_csv y deja rastro en `data\alertas.log` + tabla `etl_runs`.
+`pipeline.bat` ejecuta run → criticidad → salida_csv → **vigía de antigüedad** y deja rastro
+en `data\alertas.log` + tabla `etl_runs`. El vigía (`alerta_stale.py`, exit 3 = STALE) detecta
+el caso "el pipeline nunca corrió" (PC apagado, tarea desactivada): si no hay
+`ultima_actualizacion_ok` o tiene >48 h, alerta por webhook/log. Además, `run.py` **borra**
+la marca OK cuando alguna fuente falla, así un fallo activo se ve aunque la última fecha
+exitosa sea reciente.
 ✅ Recomendado además: Panel de control → Opciones de energía → "Reanudar tareas programadas" (el PC encendido a las 06:00 refresca; si estuvo apagado, lo hace al encenderse).
 
 ## Paso 5 — Conectar Power BI Desktop
@@ -60,9 +65,10 @@ schtasks /Run /TN "PoderLluvia_ETL"     :: prueba inmediata
 - O vista nativa: app.powerbi.com → tablero → ⋯ → **Alertas** sobre la tarjeta "Días desde última actualización" (medida `alerta_stale`).
 
 ## Verificación final (checklist)
-- [ ] `python tests\test_etl.py` → 5× PASS
-- [ ] `schtasks /Query /TN PoderLluvia_ETL /V` → "Last Task Result: 0" (o 2 con alerta explicada)
+- [ ] `python tests\test_etl.py` → 6× PASS
+- [ ] `schtasks /Query /TN PoderLluvia_ETL /V` → "Last Task Result: 0" (o 2/3 con alerta explicada)
 - [ ] `data\export\meta.csv` contiene `ultima_actualizacion_ok` reciente
+- [ ] `python etl\alerta_stale.py --horas 48` → "OK: datos frescos" (exit 0)
 - [ ] Tablero publicado: KPI "Última actualización" refleja fecha real
 - [ ] Refresco manual en servicio (⋯ → Actualizar ahora) funciona vía gateway
 

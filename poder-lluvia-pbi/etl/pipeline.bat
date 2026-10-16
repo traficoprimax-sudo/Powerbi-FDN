@@ -9,4 +9,11 @@ python salida_csv.py
 if %RUNERR% neq 0 (
   echo %date% %time% ALERTA: fuentes fallidas (exit %RUNERR%) >> ..\data\alertas.log
 )
-exit /b %RUNERR%
+REM Vigia de datos antiguos (cubre "el pipeline nunca corro"): exit 3 = STALE
+python alerta_stale.py --horas 48
+set STALEERR=%errorlevel%
+if %STALEERR% equ 3 (
+  echo %date% %time% ALERTA: datos STALE - ver meta.ultima_actualizacion_ok >> ..\data\alertas.log
+)
+if %RUNERR% neq 0 exit /b %RUNERR%
+exit /b %STALEERR%

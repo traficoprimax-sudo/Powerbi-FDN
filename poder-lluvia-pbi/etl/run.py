@@ -76,6 +76,10 @@ def main():
     if total_fail == 0:
         con.execute("INSERT OR REPLACE INTO meta(clave,valor) VALUES ('ultima_actualizacion_ok',?)",
                     (dt.datetime.now().isoformat(),))
+    else:
+        # borrar la marca "OK" anterior: así el vigía (alerta_stale) y Power BI
+        # ven que HAY un fallo activo, no una fecha de éxito antigua.
+        con.execute("DELETE FROM meta WHERE clave='ultima_actualizacion_ok'")
     con.commit(); con.close()
     print(json.dumps({"fuentes_ok": total_ok, "fuentes_fallidas": total_fail, "db": path}))
     sys.exit(0 if total_fail == 0 else 2)

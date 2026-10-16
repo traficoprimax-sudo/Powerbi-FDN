@@ -31,10 +31,16 @@ jobs:
           python etl/run.py || echo "ETL_EXIT=$?" >> "$GITHUB_ENV"
           python etl/criticidad.py
           python etl/salida_csv.py
+      - name: Vigía de antigüedad (independiente del ETL)
+        run: python etl/alerta_stale.py --horas 48 || echo "STALE_EXIT=$?" >> "$GITHUB_ENV"
       - name: Alerta si hubo fuentes fallidas
         if: env.ETL_EXIT != '' && env.ETL_EXIT != '0'
         run: |
           echo "::warning::Fuentes fallidas (exit $ETL_EXIT). Ver tabla etl_runs / webhook."
+      - name: Alerta si los datos quedaron antiguos
+        if: env.STALE_EXIT == '3'
+        run: |
+          echo "::error::Datos STALE (>48h sin actualización OK)."
       - name: Publicar artefacto data/export
         uses: actions/upload-artifact@v4
         with:
